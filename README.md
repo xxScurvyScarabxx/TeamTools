@@ -45,9 +45,8 @@ TeamTools is a plugin that manage a BanSystem, MuteSystem, Full Vanish, Own Gamo
 | - | muteinfo < player > | Zeigt die muteinfo für einen Spieler |
 | tt.team | @team < msg > | Teamchat |
 | tt.fly | fly | Fly Aktivieren und Deaktivieren |
-| tt.staff.gm< 0/1/2/3 > | staff <gm> < 1|2|3 > <player> | Gamemode Command |
+| tt.staff.gm< 0/1/2/3 > | staff <gm> < 1/2/3 > <player> | Gamemode Command |
 | tt.vanish | v or staff vanish < player > | Vanish Command |
-
 | tt.* | - | Alle TeamTools Permission |
   
 ### Blockpoints -> Funktion:
