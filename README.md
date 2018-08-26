@@ -8,6 +8,9 @@ TeamTools is a plugin that manage a BanSystem, MuteSystem, Full Vanish, Own Gamo
 - You are not allowed to publish this plugin without giving credits(Link to this Repo, Link to Hyroxing account...)
 ### With downloading the plugin, you agree to the points above
 --------------------
+### Download .phar:
+- [![.phar](https://poggit.pmmp.io/ci/Hyroxing/TeamTools/TeamTools-iTzFreeHD)](https://poggit.pmmp.io/ci/Hyroxing/TeamTools/TeamTools-iTzFreeHD)
+
 --------------------
 ## German:
 
