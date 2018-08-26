@@ -587,7 +587,7 @@ class TeamTools extends PluginBase implements Listener {
         }
         
         if ($type == 'blockinfo') {
-            $player->sendMessage($this->p.c::GRAY.'/blockinfo <player> - Zeitg dir informationen über den Bans eines Spilers');
+            $player->sendMessage($this->p.c::GRAY.'/blockinfo <player> - Zeitg dir informationen über den Bans eines Spielers');
         }
         
         if ($type == 'perms') {
