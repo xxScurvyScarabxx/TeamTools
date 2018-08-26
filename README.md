@@ -29,20 +29,21 @@ TeamTools is a plugin that manage a BanSystem, MuteSystem, Full Vanish, Own Gamo
 
 ### Guide:
 
-- Actions:
-
-| Actions  | Benutzung | Bedeutung |
-| ------------- | ------------- |------------- | 
-| msg | action: 'msg: Hello World' | Sendet dem Spieler eine Nachricht |
-| cmd | action: 'cmd:freeparticle' | Führt einen befehl für den Spieler aus |
-| menu | action: 'menu:Main' | Öffnet das jeweils angegebene Menu |
-| tp | action: 'tp:X:Y:Z:world' | Teleportiert den Spieler zu den angegebenen Kordinaten |
-| tp-spawn | action: 'tp:spawn' | Teleportiert den Spieler zum Weltpawm |
-
-- Permissions:
+- Permissions und Commands:
 
 | Permission | Command | Beschreibung |
-| ------------- | ------------- |------------- | 
-| lobby.fly | fly | Aktiviert / Deaktiveirt den Flugmodus |
-| lobby.build | build | Aktiviert / Deaktiveirt den Buildmodus |
-| - | lbmain | Gibt dem Spieler die Main Items |
+| ------------- | ------------- |------------- |
+| tt.block | block <player> <block-id> | Haupt Ban/Block cmd |
+| tt.block | blockid | Zeigt alle ban IDs mit Grund |
+| tt.block | blockinfo <player> | Zeigt den Status von einem Spieler |
+| tt.block | block <player> setpoints <1-7> | So lassen sich die Blockpoints einstellen |
+| tt.block | unblock <player> | Entbanne einen Spieler |
+| tt.mute | mute <player> <id> |  |
+| tt.mute | muteid | Zeigt dir alle Mute IDs |
+| tt.mute | mute <player> setpoints <0-3> | So lassen sich die Mute points einstellen |
+| tt.mute | unmute <player> | Unmute einen Spieler |
+| - | muteinfo <player> | Zeigt die muteinfo für einen Spieler |
+| tt.team | @team <msg> | Teamchat |
+| tt.fly | fly | Fly Aktivieren und Deaktivieren |
+| tt.staff.gm<0/1/2/3> | staff <gm> <1|2|3> <player> | Gamemode Command |
+| tt.* | - | Alle TeamTools Permission |
