@@ -1,0 +1,56 @@
+name: Team-Tools
+main: iTzFreeHD\TT\TeamTools
+api:
+- 3.0.0-ALPHA10
+- 3.0.0-ALPHA11
+- 3.0.0-ALPHA12
+version: 0.4.1
+author: iTzFreeHD
+commands:
+  staff:
+    description: Only Staff
+  v:
+      description: Only Staff
+      aliases: [vanish]
+  mute:
+      description: Only Staff - tt.mute
+  block:
+      description: Only Staff - tt.block
+  unblock:
+      description: Only Staff - tt.block
+  blockinfo:
+      description: Only Staff - tt.block
+      aliases: [binfo]
+  blockid:
+      description: Only Staff - tt.block
+      aliases: [bid]
+  unmute:
+      description: Only Staff - tt.mute
+  muteinfo:
+      description: Only Staff - tt.mute
+  muteid:
+      description: Only Staff - tt.mute
+      aliases: [mid]
+  fly:
+      description: Only Staff
+      aliases: [fliegen]
+permissions:
+  tt.*:
+    tt.block:
+      description: "Hyroxing-Development"
+    tt.mute:
+      description: "Hyroxing-Development"
+    tt.team:
+      description: "Hyroxing-Development"
+    tt.fly:
+      description: "Hyroxing-Development"
+    tt.staff:
+      description: "Hyroxing-Development"
+    tt.staff.gm0:
+      description: "Hyroxing-Development"
+    tt.staff.gm1:
+      description: "Hyroxing-Development"
+    tt.staff.gm2:
+      description: "Hyroxing-Development"
+    tt.staff.gm3:
+      description: "Hyroxing-Development"
