@@ -19,6 +19,7 @@ class TeamTools extends PluginBase implements Listener {
     public $p = c::GRAY.'['.c::RED.'TeamTools'.c::GRAY.'] ';
     public $cfg;
     public $vanish = [];
+    public $Manager;
     public $mutes = array(
         1 => "Spamming",
         2 => "Beleidigung",
@@ -40,6 +41,7 @@ class TeamTools extends PluginBase implements Listener {
         9 => ['Grund' => 'Extrem', 'Dauer' => 'Permanent']
     );
 
+
     public function onEnable()
     {
         @mkdir($this->getDataFolder());
@@ -49,19 +51,87 @@ class TeamTools extends PluginBase implements Listener {
         $this->getScheduler()->scheduleRepeatingTask(new Check($this), 20);
         $vtask = new VanishTask($this);
         $this->cfg = new Config($this->getDataFolder().'/config.yml', Config::YAML);
+        $this->Manager = new Manager($this);
+
+        /**if (empty($config->get('Report-Reasons'))) {
+            $config->set('Report-Reasons', [
+                'Hacking',
+                'Bugusing',
+                'Chat-verhalten'
+            ]);
+            $config->save();
+        }**/
+
+        if (empty($this->cfg->get('Global-Mode'))) {
+            $this->cfg->set('Global-Mode', false);
+            $this->cfg->save();
+        }
+
+        if ($this->Manager->isGlobal()) {
+            if (!file_exists('/TT/')) {
+                mkdir('/TT/');
+                mkdir('/TT/Bans');
+            }
+        }
 
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool
     {
 #########################################
+        $Manager = new Manager($this);
+        if ($Manager->isGlobal()) {
+            $config = new Config('/TT/data.yml', Config::YAML);
+        } else {
+            $config = new Config($this->getDataFolder().'/data.yml', Config::YAML);
+        }
+
+
+        if ($command->getName() == 'reports') {
+            if ($sender->hasPermission('tt.report')) {
+                if ($sender instanceof Player) {
+
+                }
+            }
+        }
+
+
+        if ($command->getName() == 'report') {
+            if ($sender instanceof Player) {
+                if (isset($args[0]) and isset($args[1])) {
+                    $rplayer = $this->getServer()->getPlayerExact($args[0]);
+                    if ($rplayer != null) {
+                        if (is_numeric($args[1])) {
+                            $ids = $Manager->getReportIDs();
+                            $count = count($ids);
+                            if ($args[1] > 0 and $args[1] <= $count) {
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+
         if ($command->getName() == 'block') {
             if ($sender->hasPermission('tt.block')) {
                 if (isset($args[0])) {
                     if (isset($args[1])) {
                         $sender2 = $this->getServer()->getPlayer($args[0]);
                         if ($sender2->isOnline()) {
-                            $pcfg = new Config($this->getDataFolder().'/Bans/'.$sender2->getName().".yml", Config::YAML);
+                            if ($Manager->isGlobal()) {
+                                $pcfg = new Config('/TT/Bans/'.$sender2->getName().".yml", Config::YAML);
+                            } else {
+                                $pcfg = new Config($this->getDataFolder().'/Bans/'.$sender2->getName().".yml", Config::YAML);
+                            }
+                            if (empty($pcfg->get('points'))) {
+                                $pcfg->set('points', 1);
+                                $pcfg->save();
+                            }
+
                             if (array_key_exists($args[1], $this->bans)){
 
                                 $id = $this->bans[$args[1]];
@@ -101,7 +171,7 @@ class TeamTools extends PluginBase implements Listener {
                                 if (isset($args[2])) {
                                     if (is_numeric($args[2])) {
                                         if ($args[2] <= 7 and $args >= 1) {
-                                            $this->cfg->reload();
+                                            $config->reload();
                                             $pcfg->set('points', $args[2]);
                                             $sender->sendMessage(c::GREEN."Du hast die Ban-Punkte von ".$sender2->getName()." erfolgreich auf ".$args[2]." gesetzt");
                                             $pcfg->save();
@@ -131,7 +201,11 @@ class TeamTools extends PluginBase implements Listener {
         if ($command->getName() == 'blockinfo') {
             if ($sender->hasPermission('tt.block')) {
                 if (isset($args[0])) {
-                    $pcfg = new Config($this->getDataFolder().'/Bans/'.$args[0].".yml", Config::YAML);
+                    if ($Manager->isGlobal()) {
+                        $pcfg = new Config('/TT/Bans/'.$args[0].".yml", Config::YAML);
+                    } else {
+                        $pcfg = new Config($this->getDataFolder().'/Bans/'.$args[0].".yml", Config::YAML);
+                    }
                     $info = $pcfg->get('Info');
 
                     if ($info == null) {
@@ -164,7 +238,7 @@ class TeamTools extends PluginBase implements Listener {
                             c::GOLD.'  Grund: '.c::RESET.$id['Grund'],
                             c::GOLD.'  Mute-Points: '.c::RESET.$pcfg->get('points').' (Standart = 1)',
                             c::GOLD.'  Vebleibendezeit: '.$bt,
-                            c::GOLD.'  Gemutet von: '.c::RESET.$exinfo[1]
+                            c::GOLD.'  Geblockt von: '.c::RESET.$exinfo[1]
                         );
                         $sender->sendMessage($ban[0]."\n".$ban[1]."\n".c::GOLD.'  Status: '.c::RESET.'gebannt'."\n".$ban[2]."\n".$ban[3]."\n".$ban[4]."\n".$ban[5]."\n".$ban[0]);
                     }
@@ -195,7 +269,11 @@ class TeamTools extends PluginBase implements Listener {
         if ($command->getName() == 'unblock') {
             if ($sender->hasPermission('tt.block')) {
                 if (isset($args[0])) {
-                    $pcfg = new Config($this->getDataFolder().'/Bans/'.$args[0].".yml", Config::YAML);
+                    if ($Manager->isGlobal()) {
+                        $pcfg = new Config('/TT/Bans/'.$args[0].".yml", Config::YAML);
+                    } else {
+                        $pcfg = new Config($this->getDataFolder().'/Bans/'.$args[0].".yml", Config::YAML);
+                    }
 
                     if (!empty($pcfg->get('Info'))) {
                         $pcfg->set('Info', null);
@@ -233,52 +311,52 @@ class TeamTools extends PluginBase implements Listener {
                         $sender2 = $this->getServer()->getPlayer($args[0]);
                         if ($sender2->isOnline()) {
                             if (array_key_exists($args[1], $this->mutes)) {
-                                if ($this->cfg instanceof Config) {
-                                    $this->cfg->reload();
-                                    $strafen = $this->cfg->get($sender2->getName()."_strafen");
+                                if ($config instanceof Config) {
+                                    $config->reload();
+                                    $strafen = $config->get($sender2->getName()."_strafen");
                                     if (empty($strafen)) {
-                                        $this->cfg->set($sender2->getName(), $args[1].",".$sender->getName().",".$oneHtime->format('Y-m-d H:i:s'));
-                                        $this->cfg->set($sender2->getName()."_strafen", 1);
+                                        $config->set($sender2->getName(), $args[1].",".$sender->getName().",".$oneHtime->format('Y-m-d H:i:s'));
+                                        $config->set($sender2->getName()."_strafen", 1);
                                         $sender->sendMessage($this->p.c::GRAY.'Du hast '.$sender2->getName().' für 1h vom Chat verbannt');
                                         $sender2->sendMessage(c::GRAY.'Du wurdest für 1h vom Chat verbannt');
                                     } else {
                                         if ($strafen == 1) {
-                                            $this->cfg->set($sender2->getName(), $args[1].",".$sender->getName().",".$twoHtime->format('Y-m-d H:i:s'));
-                                            $this->cfg->set($sender2->getName()."_strafen", 2);
+                                            $config->set($sender2->getName(), $args[1].",".$sender->getName().",".$twoHtime->format('Y-m-d H:i:s'));
+                                            $config->set($sender2->getName()."_strafen", 2);
 
                                             $sender->sendMessage($this->p.c::GRAY.'Du hast '.$sender2->getName().' für 2h vom Chat verbannt');
                                             $sender2->sendMessage(c::GRAY.'Du wurdest für 2h vom Chat verbannt');
                                         } elseif ($strafen == 2) {
-                                            $this->cfg->set($sender2->getName(), $args[1].",".$sender->getName().",".$threeHtime->format('Y-m-d H:i:s'));
-                                            $this->cfg->set($sender2->getName()."_strafen", 3);
+                                            $config->set($sender2->getName(), $args[1].",".$sender->getName().",".$threeHtime->format('Y-m-d H:i:s'));
+                                            $config->set($sender2->getName()."_strafen", 3);
 
                                             $sender->sendMessage($this->p.c::GRAY.'Du hast '.$sender2->getName().' für 3h vom Chat verbannt');
                                             $sender2->sendMessage(c::GRAY.'Du wurdest für 3h vom Chat verbannt');
                                         } elseif ($strafen == 3) {
-                                            $this->cfg->set($sender2->getName(), $args[1].",".$sender->getName().",".$daytime->format('Y-m-d H:i:s'));
+                                            $config->set($sender2->getName(), $args[1].",".$sender->getName().",".$daytime->format('Y-m-d H:i:s'));
 
                                             $sender->sendMessage($this->p.c::GRAY.'Du hast '.$sender2->getName().' für 1 Tag vom Chat verbannt');
                                             $sender2->sendMessage(c::GRAY.'Du wurdest für 1 Tag vom Chat verbannt');
                                         }
                                     }
-                                    $this->cfg->save();
+                                    $config->save();
                                 }
                             } elseif ($args[1] = 'setpoints') {
                                 if (isset($args[2])) {
                                     if (is_numeric($args[2])) {
                                         if ($args[2] <= 3 and $args >= 1) {
-                                            if ($this->cfg instanceof Config) {
-                                                $this->cfg->reload();
-                                                $this->cfg->set($sender2->getName()."_strafen", $args[2]);
-                                                //$this->cfg->remove($sender2->getName()."_strafen");
+                                            if ($config instanceof Config) {
+                                                $config->reload();
+                                                $config->set($sender2->getName()."_strafen", $args[2]);
+                                                //$config->remove($sender2->getName()."_strafen");
                                                 $sender->sendMessage(c::GREEN."Du hast die Mute-Punkte von ".$sender2->getName()." erfolgreich auf ".$args[2]." gesetzt");
-                                                $this->cfg->save();
+                                                $config->save();
                                             }
                                         } elseif ($args[2] == 0) {
-                                            if ($this->cfg instanceof Config) {
-                                                $this->cfg->reload();
-                                                $this->cfg->remove($sender2->getName()."_strafen");
-                                                $this->cfg->save();
+                                            if ($config instanceof Config) {
+                                                $config->reload();
+                                                $config->remove($sender2->getName()."_strafen");
+                                                $config->save();
                                                 $sender->sendMessage(c::GREEN."Du hast die Mute-Punkte von ".$sender2->getName()." erfolgreich auf ".$args[2]." gesetzt");
                                             }
 
@@ -323,10 +401,10 @@ class TeamTools extends PluginBase implements Listener {
 
         if ($command->getName() == 'muteinfo') {
             if (isset($args[0])) {
-                if ($this->cfg instanceof Config) {
-                    $this->cfg->reload();
-                    if ($this->cfg->exists($args[0])) {
-                        $check = $this->cfg->get($args[0]);
+                if ($config instanceof Config) {
+                    $config->reload();
+                    if ($config->exists($args[0])) {
+                        $check = $config->get($args[0]);
                         $excheck = explode(",", $check);
 
                         #####
@@ -341,7 +419,7 @@ class TeamTools extends PluginBase implements Listener {
                             c::GOLD.'  Name: '.c::RESET.$args[0],
                             //c::GOLD.'Status: ',
                             c::GOLD.'  Grund: '.c::RESET.$this->mutes[$excheck[0]],
-                            c::GOLD.'  Mute-Points: '.c::RESET.$this->cfg->get($args[0].'_strafen'),
+                            c::GOLD.'  Mute-Points: '.c::RESET.$config->get($args[0].'_strafen'),
                             c::GOLD.'  Vebleibendezeit: '.c::RESET.$extime[1]." Stunden, ".$extime[2]." Minuten, ".$extime[3]." Sekunden.",
                             c::GOLD.'  Gemutet von: '.c::RESET.$excheck[1]
                         );
@@ -362,11 +440,11 @@ class TeamTools extends PluginBase implements Listener {
         if ($command->getName() == 'unmute') {
             if ($sender->hasPermission('tt.mute')) {
                 if (isset($args[0])) {
-                    if ($this->cfg instanceof Config) {
-                        $this->cfg->reload();
-                        if (!empty($this->cfg->get($args[0]))) {
-                            $this->cfg->set($args[0], null);
-                            $this->cfg->save();
+                    if ($config instanceof Config) {
+                        $config->reload();
+                        if (!empty($config->get($args[0]))) {
+                            $config->set($args[0], null);
+                            $config->save();
                             $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$args[0].' wurde erfolgreich entmutet');
                         } else {
                             $sender->sendMessage($this->p.c::RED.'Der Spieler ist nicht gemutet');
@@ -612,7 +690,11 @@ class TeamTools extends PluginBase implements Listener {
         $player = $event->getPlayer();
         $msg = $event->getMessage();
         $words = explode(' ', $msg);
-
+        if ($this->Manager->isGlobal()) {
+            $config = new Config('/TT/data.yml', Config::YAML);
+        } else {
+            $config = new Config($this->getDataFolder().'/data.yml', Config::YAML);
+        }
         if ($event->getPlayer()->hasPermission('tt.team')) {
             if ($words[0] === '@t' or $words[0] === '@team') {
                 array_shift($words);
@@ -626,9 +708,9 @@ class TeamTools extends PluginBase implements Listener {
                 }
             }
         }
-        if ($this->cfg instanceof Config) {
-            $this->cfg->reload();
-            $check = $this->cfg->get($player->getName());
+        if ($config instanceof Config) {
+            $config->reload();
+            $check = $config->get($player->getName());
             $excheck = explode(",", $check);
             if (!empty($check)) {
                 $event->setCancelled(true);
@@ -648,12 +730,20 @@ class TeamTools extends PluginBase implements Listener {
     public function onJoin(PlayerJoinEvent $event)
     {
         if (!file_exists($this->getDataFolder().'/Bans/'.$event->getPlayer()->getName().".yml")) {
-            $pcfg = new Config($this->getDataFolder().'/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            if ($this->Manager->isGlobal()) {
+                $pcfg = new Config('/TT/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            } else {
+                $pcfg = new Config($this->getDataFolder().'/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            }
 
             $pcfg->set('points', 1);
             $pcfg->save();
         } else {
-            $pcfg = new Config($this->getDataFolder().'/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            if ($this->Manager->isGlobal()) {
+                $pcfg = new Config('/TT/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            } else {
+                $pcfg = new Config($this->getDataFolder().'/Bans/'.$event->getPlayer()->getName().".yml", Config::YAML);
+            }
             if ($pcfg->exists('Info')) {
                 $info = $pcfg->get('Info');
                 $exinfo = explode(',',$info);
