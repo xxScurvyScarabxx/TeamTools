@@ -39,6 +39,9 @@ class Manager
     public function isGlobal()
     {
         $this->cfg = new Config($this->plugin->getDataFolder().'/config.yml', Config::YAML);
+        if (!file_exists('/TT/') and $this->cfg->get('Global-Mode') == true) {
+            $this->plugin->getServer()->shutdown();
+        }
         return $this->cfg->get('Global-Mode');
     }
 }
