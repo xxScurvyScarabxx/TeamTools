@@ -41,6 +41,10 @@ permissions:
       description: "Hyroxing-Development"
     tt.mute:
       description: "Hyroxing-Development"
+    tt.vanish:
+      description: "Hyroxing-Developmenttt.showall"
+    tt.showall:
+      description: "Hyroxing-Development"
     tt.team:
       description: "Hyroxing-Development"
     tt.fly:
