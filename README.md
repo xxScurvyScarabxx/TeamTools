@@ -55,6 +55,8 @@ TeamTools is a plugin that manage a BanSystem, MuteSystem, Full Vanish, Own Gamo
 ### Blockpoints -> Funktion:
 - Die block points Zählen wie oft ein Spieler gebannt wurde. Die eigentliche funktion sorgt dafür das die feste Banzeit sich mit den Points Multipliziert. Wenn 7 Bannpoints erreicht sind wird der Spieler automatisch permanent gebannt.
   
+### Multi-Server Support (Global-Mode)
+- Setzte in deiner config.yml Global-Mode auf true damit alle daten in dem Ordner /TT/ gespeichert werden. Damit die funktion aktiv wird ist es notwendig den Server neu zu Starten
   
 ### Pictures:
 <img src="https://raw.githubusercontent.com/Hyroxing/TeamTools/master/TeamTools-Bilder/tt-block.PNG"></img> <br>
