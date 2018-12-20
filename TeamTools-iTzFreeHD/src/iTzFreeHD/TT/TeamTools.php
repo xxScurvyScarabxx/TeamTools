@@ -121,69 +121,74 @@ class TeamTools extends PluginBase implements Listener {
                 if (isset($args[0])) {
                     if (isset($args[1])) {
                         $sender2 = $this->getServer()->getPlayer($args[0]);
-                        if ($sender2->isOnline()) {
-                            if ($Manager->isGlobal()) {
-                                $pcfg = new Config('/TT/Bans/'.$sender2->getName().".yml", Config::YAML);
-                            } else {
-                                $pcfg = new Config($this->getDataFolder().'/Bans/'.$sender2->getName().".yml", Config::YAML);
-                            }
-                            if (empty($pcfg->get('points'))) {
-                                $pcfg->set('points', 1);
-                                $pcfg->save();
-                            }
-
-                            if (array_key_exists($args[1], $this->bans)){
-
-                                $id = $this->bans[$args[1]];
-                                if ($id['Dauer'] == 'Permanent') {
-                                    $pcfg->set('Info', $args[1].','.$sender->getName().','.'Permanent');
-                                    $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::AQUA.' Permanet '.c::GREEN.'vom Netzwerk ausgeschlossen');
-                                    $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
-                                    $pcfg->save();
+                        if ($sender2 instanceof Player) {
+                            if ($sender2->isOnline()) {
+                                if ($Manager->isGlobal()) {
+                                    $pcfg = new Config('/TT/Bans/'.$sender2->getName().".yml", Config::YAML);
                                 } else {
-                                    $exid = explode(':', $id['Dauer']);
-                                    $time = new \DateTime('now');
-
-                                    $points = $pcfg->get('points');
-                                    if ($exid[0] == 'T') {
-                                        $time->add(new \DateInterval('PT'.$exid[1]*$points.$exid[2]));
-                                    } else {
-                                        $time->add(new \DateInterval('P'.$exid[1]*$points.$exid[2]));
-
-                                    }
-                                    if ($points == 7) {
-                                        $pcfg->set('Info', $args[1].','.$sender->getName().','.'perma');
-                                        $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::AQUA.' Permanet'.c::GREEN.'vom Netzwerk ausgeschlossen');
-                                        $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
-                                    } else {
-
-                                        $pcfg->set('Info', $args[1].','.$sender->getName().','.$time->format('Y-m-d H:i:s'));
-                                        $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::GREEN.' für '.c::AQUA.$exid[1]*$points.$exid[2].c::GREEN.' vom Netzwerk ausgeschlossen');
-                                        $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
-                                    }
-                                    $points++;
-                                    if ($pcfg->get('points') <=7) {
-                                        $pcfg->set('points', $points);
-                                    }
+                                    $pcfg = new Config($this->getDataFolder().'/Bans/'.$sender2->getName().".yml", Config::YAML);
+                                }
+                                if (empty($pcfg->get('points'))) {
+                                    $pcfg->set('points', 1);
                                     $pcfg->save();
                                 }
-                            }  elseif ($args[1] = 'setpoints') {
-                                if (isset($args[2])) {
-                                    if (is_numeric($args[2])) {
-                                        if ($args[2] <= 7 and $args >= 1) {
-                                            $config->reload();
-                                            $pcfg->set('points', $args[2]);
-                                            $sender->sendMessage(c::GREEN."Du hast die Ban-Punkte von ".$sender2->getName()." erfolgreich auf ".$args[2]." gesetzt");
-                                            $pcfg->save();
 
+                                if (array_key_exists($args[1], $this->bans)){
+
+                                    $id = $this->bans[$args[1]];
+                                    if ($id['Dauer'] == 'Permanent') {
+                                        $pcfg->set('Info', $args[1].','.$sender->getName().','.'Permanent');
+                                        $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::AQUA.' Permanet '.c::GREEN.'vom Netzwerk ausgeschlossen');
+                                        $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
+                                        $pcfg->save();
+                                    } else {
+                                        $exid = explode(':', $id['Dauer']);
+                                        $time = new \DateTime('now');
+
+                                        $points = $pcfg->get('points');
+                                        if ($exid[0] == 'T') {
+                                            $time->add(new \DateInterval('PT'.$exid[1]*$points.$exid[2]));
                                         } else {
-                                            $sender->sendMessage($this->p.c::RED.'Bitte wähle eine Zahl zwisch 0-3');
+                                            $time->add(new \DateInterval('P'.$exid[1]*$points.$exid[2]));
+
+                                        }
+                                        if ($points == 7) {
+                                            $pcfg->set('Info', $args[1].','.$sender->getName().','.'perma');
+                                            $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::AQUA.' Permanet'.c::GREEN.'vom Netzwerk ausgeschlossen');
+                                            $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
+                                        } else {
+
+                                            $pcfg->set('Info', $args[1].','.$sender->getName().','.$time->format('Y-m-d H:i:s'));
+                                            $sender->sendMessage($this->p.c::GREEN.'Der Spieler '.$sender2->getName().' wurde mit dem Grund '.c::DARK_RED.$id['Grund'].c::GREEN.' für '.c::AQUA.$exid[1]*$points.$exid[2].c::GREEN.' vom Netzwerk ausgeschlossen');
+                                            $sender2->kick(c::RED.'Du wurdest gebannt für mehr Infos rejoine!', false);
+                                        }
+                                        $points++;
+                                        if ($pcfg->get('points') <=7) {
+                                            $pcfg->set('points', $points);
+                                        }
+                                        $pcfg->save();
+                                    }
+                                }  elseif ($args[1] = 'setpoints') {
+                                    if (isset($args[2])) {
+                                        if (is_numeric($args[2])) {
+                                            if ($args[2] <= 7 and $args >= 1) {
+                                                $config->reload();
+                                                $pcfg->set('points', $args[2]);
+                                                $sender->sendMessage(c::GREEN."Du hast die Ban-Punkte von ".$sender2->getName()." erfolgreich auf ".$args[2]." gesetzt");
+                                                $pcfg->save();
+
+                                            } else {
+                                                $sender->sendMessage($this->p.c::RED.'Bitte wähle eine Zahl zwisch 0-3');
+                                            }
                                         }
                                     }
+                                } else {
+                                    $this->sendMessage($sender, 'ban');
                                 }
                             } else {
-                                $this->sendMessage($sender, 'ban');
+                                $sender->sendMessage($this->p.c::RED.'Der Spieler ist nicht Online');
                             }
+
                         } else {
                             $sender->sendMessage($this->p.c::RED.'Der Spieler ist nicht Online');
                         }

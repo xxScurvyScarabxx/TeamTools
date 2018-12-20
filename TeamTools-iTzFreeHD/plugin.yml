@@ -6,7 +6,7 @@ api:
 - 3.0.0-ALPHA12
 - 4.0.0
 version: 1.4.3
-author: iTzFreeHD
+author: BattleMC
 commands:
   staff:
     description: Only Staff
